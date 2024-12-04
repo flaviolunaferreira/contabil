@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   # Serviço para construir o JAR usando Maven e Java 17
@@ -18,11 +19,13 @@ services:
     volumes:
       - ./target:/app/target
     depends_on:
-      - db
+      - db  # Garante que o banco de dados esteja disponível antes de iniciar a aplicação
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/contabildb
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/contabildb  # 'db' é o nome do serviço do banco
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 3012
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update  # (Pode ser 'none', 'update', 'create', etc.)
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect  # Dialeto MySQL 8
 
   # Serviço do banco de dados MySQL
   db:
@@ -31,4 +34,13 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: contabildb
+      MYSQL_DATABASE: contabildb  # O nome do banco de dados
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 3012
+    volumes:
+      - mysql-data:/var/lib/mysql  # Para persistir os dados do banco entre os reinícios dos containers
+
+# Volumes para persistência de dados (se necessário)
+volumes:
+  mysql-data:
+    driver: local

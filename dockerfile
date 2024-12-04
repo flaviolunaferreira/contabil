@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copia o arquivo JAR gerado para o diretório de trabalho
-COPY target/contabil.jar contabil.jar
+COPY target/contabil-0.0.1.jar contabil.jar
 
 # Expõe a porta em que a aplicação estará rodando
 EXPOSE 8080
