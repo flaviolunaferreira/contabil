@@ -1,0 +1,34 @@
+
+services:
+  # Serviço para construir o JAR usando Maven e Java 17
+  builder:
+    image: maven:3.8.5-openjdk-17
+    volumes:
+      - ./target:/project/target
+    working_dir: /project
+    command: mvn clean package
+
+  # Serviço da aplicação que irá executar o JAR
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./target:/app/target
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/contabildb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 3012
+
+  # Serviço do banco de dados MySQL
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: contabildb
